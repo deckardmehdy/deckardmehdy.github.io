@@ -1,0 +1,41 @@
+body { 
+    padding-top: 80px; 
+    height: 100%;
+}
+
+td {
+    border: 1px solid;
+    width: 20px;
+    height: 20px;
+}
+
+
+
+.btn-space {
+	margin-right: 5px;
+}
+
+#update {
+	margin-bottom: 15px; 
+	margin-top: 10px;
+}
+
+.wall {
+	transition : background-color 0.1s ease-in-out;
+	background-color: gray;
+}
+
+.searching {
+	transition : background-color 0.08s ease-in-out;
+	background-color: #ffbc78;
+}
+
+.visited {
+	transition : background-color 0.08s ease-in-out;
+	background-color: #e89440;
+}
+
+.success {
+	transition : background-color 0.08s ease-in-out;
+	background-color: #ffee31;
+}
