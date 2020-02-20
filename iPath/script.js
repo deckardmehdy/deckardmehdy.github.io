@@ -1,19 +1,21 @@
-//Next thing to do:
+//Things to do:
 // Get rid of update span and just update with info about algo
 	// inception dates, fun trivia facts
-// Add more algorithms -- make sure greedy best first search is right
-// Add more maze creation functions -- make border (first row/col + last row/col) a wall
-	// Do horizontal and vertical maze
-	// Do recursive division + vertical and horizontal skewing
+// Add more algorithms (research)
+// Add more maze creation functions
+	// Do pure horizontal and pure vertical maze
+// Remove borders for cells of the same type...?
+// Need to add pictures for references of what is happening (green cell = start...)
+// Help / tutorial window
 
 /* ------------------------------------ */
 /* ---- Var Declarations & Preamble---- */
 /* ------------------------------------ */
 
 var totalRows = 25;
-var totalCols = 39;
+var totalCols = 40;
 var inProgress = false;
-var initialMessage = "Select cells to build walls! Click start when you finish!";
+//var initialMessage = "Click or drag cells to build walls! Press start when you finish and have selected an algorithm!";
 var cellsToAnimate = [];
 var createWalls = false;
 var algorithm = null;
@@ -133,8 +135,6 @@ function minHeap() {
 /* ------------------------- */
 /* ---- MOUSE FUNCTIONS ---- */
 /* ------------------------- */
-
-// Do a case when start and end collide with each other
 
 $( "td" ).mousedown(function(){
 	var index = $( "td" ).index( this );
@@ -863,7 +863,6 @@ function getNeighbors(i, j){
 	return neighbors;
 }
 
-// Need to adjust speed for DFS -- too fast
 async function animateCells(){
 	animationState = null;
 	var cells = $("#tableContainer").find("td");
@@ -886,7 +885,7 @@ async function animateCells(){
 		$(cell).addClass(colorClass);
 	}
 	cellsToAnimate = [];
-	console.log("End of animation has been reached!");
+	//console.log("End of animation has been reached!");
 	return new Promise(resolve => resolve(true));
 }
 
