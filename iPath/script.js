@@ -7,6 +7,7 @@
 // Remove borders for cells of the same type...?
 // Need to add pictures for references of what is happening (green cell = start...)
 // Help / tutorial window
+// Have background animations when it is successful or failure
 
 /* ------------------------------------ */
 /* ---- Var Declarations & Preamble---- */
