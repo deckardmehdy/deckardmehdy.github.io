@@ -6,8 +6,7 @@
 	// Do pure horizontal and pure vertical maze
 // Remove borders for cells of the same type...?
 // Need to add pictures for references of what is happening (green cell = start...)
-// Help / tutorial window
-// Have background animations when it is successful or failure
+// Help / tutorial window -- bootstrap carosuel or MODAL (easier)
 
 /* ------------------------------------ */
 /* ---- Var Declarations & Preamble---- */
@@ -331,7 +330,13 @@ async function traverseGraph(algorithm){
 	clearBoard( keepWalls = true );
 	var pathFound = executeAlgo();
 	await animateCells();
-	if ( !pathFound ){ update("failure"); }
+	if ( pathFound ){ 
+		update("success");
+		await flash("green"); 
+	} else {
+		update("failure");
+		await flash("red"); 
+	}
 	inProgress = false;
 	justFinished = true;
 }
@@ -753,7 +758,6 @@ function recursiveDivMazeHelper(iStart, iEnd, jStart, jEnd, horzStart, horzEnd, 
 	}
 
 	// Draw line and create random passage
-	//if (lineOrientation == "VERTICAL" || (vertEnd - vertStart) == 0){
 	if (lineOrientation == "VERTICAL"){
 		var vertWidth = vertEnd - vertStart + 1;
 		var randCol = Math.floor(Math.random() * vertWidth) + vertStart;
@@ -890,6 +894,23 @@ async function animateCells(){
 	return new Promise(resolve => resolve(true));
 }
 
+async function flash(color){
+	var item = "#logo";
+	var originalColor = $(item).css("color");
+	if (color == "green"){
+		var colorRGB = '40,167,50';
+	} else if (color == "red"){
+		var colorRGB = '255,0,0';
+	}
+	var delay = 1; //ms
+	for (var i = 0.45; i <= 2.6; i += 0.01){
+    	$(item).css("color", 'rgba(' + colorRGB + ','+Math.abs(Math.sin(i))+')');
+		await new Promise(resolve => setTimeout(resolve, delay));
+	}
+	$(item).css("color", originalColor);
+	return new Promise(resolve => resolve(true));
+}
+
 function getDelay(){
 	var delay;
 	if (animationSpeed === "Slow"){
@@ -931,4 +952,14 @@ function clearBoard( keepWalls ){
 			}
 	}
 }
+
+// Ending statements
 clearBoard();
+
+$('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus');
+})
+
+$(window).on('load',function(){
+        $('#exampleModal').modal('show');
+});

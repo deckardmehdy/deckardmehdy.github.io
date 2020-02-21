@@ -6,8 +6,8 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
-	<nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-dark">
-  		<a class="navbar-brand" href="#">iPath</a>
+	<nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-dark" id="myNavbar">
+  		<a class="navbar-brand" href="#" id="logo">iPath</a>
   		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     		<span class="navbar-toggler-icon"></span>
 		</button>
@@ -49,17 +49,70 @@
 				</li>
 	    	</ul>
 
-	    		<!-- Make start turn to pause (yellow) when algo has started -->
 	      	<button class="btn btn-outline-success btn-space" type="submit" id="startBtn">Start</button>
 	      	<button type="button" class="btn btn-outline-warning btn-space" type="submit" id="clearBtn">Clear Board</button>
 	      	<!-- <button type="button" class="btn btn-outline-danger disabled" type="submit" id="stopBtn">Stop</button> -->
   		</div>
  	</nav>
 
- 	<div class="d-flex flex-column align-items-center" id="bigTableContainer">
- 		<span id="update">Click or drag cells to build walls. <br/>Press the 'Start' button when you finish and have selected an algorithm.</span>
-		<div id="tableContainer"></div>
+ 	<div class="d-flex flex-row flex-wrap m-2 justify-content-around">	
+ 		<div class="d-flex p-2">
+ 			<div class="key wall"></div>  
+ 			<div> Wall Node</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key start"></div>  
+ 			<div>Start Node</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key end"></div>  
+ 			<div>Target Node</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key searching"></div>  
+ 			<div class="key visited"></div>  
+ 			<div>Visited Nodes</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key success"></div>  
+ 			<div>Shortest-Path Node</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key"></div>  
+ 			<div>Unvisited Node</div>
+ 		</div>
  	</div>
+
+ 	<div class="d-flex flex-column align-items-center" id="bigTableContainer">
+		<div id="tableContainer"></div>
+		<!-- <div id="update">Click or drag cells to build walls. <br/>Press the 'Start' button when you finish and have selected an algorithm.</div> -->
+ 	</div>
+
+ 	<div class="d-flex flex-row m-4 justify-content-around">
+ 	<!-- Button trigger modal -->
+	<button type="button" class="btn btn-outline-info btn-lg" data-toggle="modal" data-target="#exampleModal" id="myModal">Tutorial</button>
+
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			    <div class="modal-header">
+			        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			    </div>
+			    <div class="modal-body">
+			        <img src="earth.gif" alt="Earth" style="width:200px;height:200px;">
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-primary">Save changes</button>
+			    </div>
+			</div>
+		</div>
+	</div>
+	</div>
 
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

@@ -9,6 +9,17 @@ td {
     height: 20px;
 }
 
+.key {
+	border: 1px solid #79d9ce;
+	width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+ul {
+	list-style-type: none;
+}
+
 .btn-space {
 	margin-right: 5px;
 }
@@ -32,8 +43,8 @@ td {
 
 .searching {
 	transition : background-color 0.08s ease-in-out;
-	background-color: #ffbc78;
-	border-color: #f5cc5d;
+	background-color: #1cd4b5;
+	border-color: #1cd4b5;
 }
 
 .visited {
@@ -56,4 +67,8 @@ td {
 .end {
 	background-color: red;
 	border-color: red;
+}
+
+#bigTableContainer {
+	margin-top: 30px;
 }
