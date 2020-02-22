@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>myPath</title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+	<nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-dark" id="myNavbar">
+  		<a class="navbar-brand" href="#" id="logo">myPath</a>
+  		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    		<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+	    	<ul class="navbar-nav mr-auto">
+		      	<li class="nav-item dropdown" id="algorithms">
+		        	<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		          	Algorithms
+		        	</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="#">A*</a>
+						<a class="dropdown-item" href="#">Dijkstra</a>
+						<a class="dropdown-item" href="#">Greedy Best-First Search</a>
+					    <a class="dropdown-item" href="#">Breadth-First Search (BFS)</a>
+					    <a class="dropdown-item" href="#">Depth-First Search (DFS)</a>
+					</div>
+		      	</li>
+		      	<li class="nav-item dropdown" id="mazes">
+		      		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		          	Mazes
+		        	</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					    <a class="dropdown-item" href="#">Random</a>
+					    <a class="dropdown-item" href="#">Recursive Division</a>
+					    <a class="dropdown-item" href="#">Recursive Division (Vertical Skew)</a>
+					    <a class="dropdown-item" href="#">Recursive Division (Horizontal Skew)</a>
+					</div>
+				</li>
+		      	<li class="nav-item dropdown" id="speed">
+		      		<a class="nav-link dropdown-toggle speedDisplay" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		          	Speed: Fast
+		        	</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					    <a class="dropdown-item" href="#">Slow</a>
+					    <a class="dropdown-item" href="#">Normal</a>
+					    <a class="dropdown-item" href="#">Fast</a>
+					</div>
+				</li>
+	    	</ul>
+
+	      	<button class="btn btn-outline-success btn-space" type="submit" id="startBtn">Start</button>
+	      	<button type="button" class="btn btn-outline-warning btn-space" type="submit" id="clearBtn">Clear Board</button>
+	      	<!-- <button type="button" class="btn btn-outline-danger disabled" type="submit" id="stopBtn">Stop</button> -->
+  		</div>
+ 	</nav>
+
+ 	<div class="d-flex flex-row flex-wrap m-2 justify-content-around">	
+ 		<div class="d-flex p-2">
+ 			<div class="key wall"></div>  
+ 			<div> Wall Node</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key start"></div>  
+ 			<div>Start Node</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key end"></div>  
+ 			<div>Target Node</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key searching"></div>  
+ 			<div class="key visited"></div>  
+ 			<div>Visited Nodes</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key success"></div>  
+ 			<div>Shortest-Path Node</div>
+ 		</div>
+ 		<div class="d-flex p-2">
+ 			<div class="key"></div>  
+ 			<div>Unvisited Node</div>
+ 		</div>
+ 	</div>
+
+ 	<div class="d-flex flex-column align-items-center" id="bigTableContainer">
+		<div id="tableContainer"></div>
+		<!-- <div id="update">Click or drag cells to build walls. <br/>Press the 'Start' button when you finish and have selected an algorithm.</div> -->
+ 	</div>
+
+ 	<div class="d-flex flex-row m-4 justify-content-around">
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-outline-info btn-lg" data-toggle="modal" data-target="#exampleModalLong">Tutorial</button>
+
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		      	<div class="container-fluid" id="modalTitleContainer">
+		        	<h3 class="modal-title" id="exampleModalLongTitle">Welcome to myPath!</h3>
+		        </div>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="container-fluid ">
+		      		<em>This is a quick tutorial that demonstrates how myPath works. If you want to skip this, then press the 'X' in the upper right-hand corner.</em>
+		      	</div>
+		      	<hr>
+		        <div class="container-fluid">
+		        	<div class="d-flex flex-column">
+		        		<div class="card bg-light">
+						  <div class="card-body">
+						    <h5 class="card-title">What are pathfinding algorithms?</h5>
+						    <p class="card-text"><em>They are a class of algorithms that find the shortest path from a given start point to an end point on a graph.</em></p>
+						  </div>
+						</div>
+						<br>
+		        		<div class="card bg-light">
+						  <div class="card-body">
+						    <h5 class="card-title">What is myPath? How does it work?</h5>
+						    <p class="card-text"><em>myPath is an interactive application that demonstrates how different pathfinding algorithms work. ADD IN STUFF ABOUT HOW IT WORKS</em></p>
+						  </div>
+						</div>
+						<br>
+						<div class="card border-primary mb-3">
+						  <div class="card-body">
+						    <h5 class="card-title">Step 1: Choose An Algorithm</h5>
+						    <p class="card-text">Click the 'Algorithm' tab and select one of the algorithms from the dropdown menu.</p>
+						  </div>
+						  <img class="card-img-bottom" src="algorithms.gif" alt="Card image cap" style="height: 20em">
+						</div>
+		        	</div>
+		        </div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary">Save changes</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="script.js"></script>
+</body>
+</html>
