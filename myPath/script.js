@@ -307,7 +307,7 @@ function updateStartBtnText(){
 	} else if (algorithm == "A*"){
 		$("#startBtn").html("Start A*");
 	} else if (algorithm == "Greedy Best-First Search"){
-		$("#startBtn").html("Start Greedy BF Search");
+		$("#startBtn").html("Start Greedy BFS");
 	}
 	return;
 }
