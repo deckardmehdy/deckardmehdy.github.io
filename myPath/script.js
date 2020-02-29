@@ -4,11 +4,9 @@
 // Add more algorithms (research)
 // Add more maze creation functions
 	// Do pure horizontal and pure vertical maze
-// Remove borders for cells of the same type...?
-// Need to add pictures for references of what is happening (green cell = start...)
-// Help / tutorial window -- bootstrap carosuel or MODAL (easier)
 // update update span... bug and changes the span contents of everything... have it edit an ID
-
+// ADD COMPUTATION TIME
+// Put moveable start and end points in tutorial
 /* ------------------------------------ */
 /* ---- Var Declarations & Preamble---- */
 /* ------------------------------------ */
@@ -308,6 +306,8 @@ function updateStartBtnText(){
 		$("#startBtn").html("Start A*");
 	} else if (algorithm == "Greedy Best-First Search"){
 		$("#startBtn").html("Start Greedy BFS");
+	} else if (algorithm == "Jump Point Search"){
+		$("#startBtn").html("Start JPS");
 	}
 	return;
 }
@@ -354,6 +354,8 @@ function executeAlgo(){
 		var pathFound = AStar();
 	} else if (algorithm == "Greedy Best-First Search"){
 		var pathFound = greedyBestFirstSearch();
+	} else if (algorithm == "Jump Point Search"){
+		var pathFound = jumpPointSearch();
 	}
 	return pathFound;
 }
@@ -548,7 +550,6 @@ function AStar() {
 	cellsToAnimate.push([[startCell[0], startCell[1]], "searching"]);
 	while (!myHeap.isEmpty()){
 		var cell = myHeap.getMin();
-		//console.log("Min was just popped from the heap! Heap is now: " + JSON.stringify(myHeap.heap));
 		var i = cell[1][0];
 		var j = cell[1][1];
 		if (visited[i][j]){ continue; }
@@ -556,7 +557,6 @@ function AStar() {
 		cellsToAnimate.push([[i, j], "visited"]);
 		if (i == endCell[0] && j == endCell[1]){
 			pathFound = true;
-			//console.log("I found the last node!");
 			update("success");
 			break;
 		}
@@ -569,7 +569,6 @@ function AStar() {
 			if (newDistance < distances[m][n]){
 				distances[m][n] = newDistance;
 				prev[m][n] = [i, j];
-				//console.log("New cell was added to the heap! It has distance = " + newDistance + ". Heap = " + JSON.stringify(myHeap.heap));
 				cellsToAnimate.push( [[m, n], "searching"] );
 			}
 			var newCost = distances[i][j] + Math.abs(endCell[0] - m) + Math.abs(endCell[1] - n);
@@ -578,9 +577,7 @@ function AStar() {
 				myHeap.push([newCost, [m, n]]);
 			}
 		}
-		//console.log("Cell [" + i + ", " + j + "] was just evaluated! myHeap is now: " + JSON.stringify(myHeap.heap));
 	}
-	//console.log(JSON.stringify(myHeap.heap));
 	// Make any nodes still in the heap "visited"
 	while ( !myHeap.isEmpty() ){
 		var cell = myHeap.getMin();
@@ -603,6 +600,226 @@ function AStar() {
 		}
 	}
 	return pathFound;
+}
+
+function jumpPointSearch() {
+	var pathFound = false;
+	var myHeap = new minHeap();
+	var prev = createPrev();
+	var distances = createDistances();
+	var costs = createDistances();
+	var visited = createVisited();
+	var walls = createVisited();
+	distances[ startCell[0] ][ startCell[1] ] = 0;
+	costs[ startCell[0] ][ startCell[1] ] = 0;
+	myHeap.push([0, [startCell[0], startCell[1]]]);
+	cellsToAnimate.push([[startCell[0], startCell[1]], "searching"]);
+	while (!myHeap.isEmpty()){
+		var cell = myHeap.getMin();
+		var i = cell[1][0];
+		var j = cell[1][1];
+		if (visited[i][j]){ continue; }
+		visited[i][j] = true;
+		cellsToAnimate.push([[i, j], "visited"]);
+		if (i == endCell[0] && j == endCell[1]){
+			pathFound = true;
+			update("success");
+			break;
+		}
+		//var neighbors = getNeighbors(i, j);
+		var neighbors = pruneNeighbors(i, j, visited, walls);
+		for (var k = 0; k < neighbors.length; k++){
+			var m = neighbors[k][0];
+			var n = neighbors[k][1];
+			if (visited[m][n]){ continue; }
+			var newDistance = distances[i][j] + Math.abs(i - m) + Math.abs(j - n);
+			if (newDistance < distances[m][n]){
+				distances[m][n] = newDistance;
+				prev[m][n] = [i, j];
+				cellsToAnimate.push( [[m, n], "searching"] );
+			}
+			var newCost = distances[i][j] + Math.abs(endCell[0] - m) + Math.abs(endCell[1] - n);
+			if (newCost < costs[m][n]){
+				costs[m][n] = newCost;
+				myHeap.push([newCost, [m, n]]);
+			}
+		}
+	}
+	// Make any nodes still in the heap "visited"
+	while ( !myHeap.isEmpty() ){
+		var cell = myHeap.getMin();
+		var i = cell[1][0];
+		var j = cell[1][1];
+		if (visited[i][j]){ continue; }
+		visited[i][j] = true;
+		cellsToAnimate.push( [[i, j], "visited"] );
+	}
+	// If a path was found, illuminate it:
+	if (pathFound) {
+		var i = endCell[0];
+		var j = endCell[1];
+		cellsToAnimate.push( [endCell, "success"] );
+		while (prev[i][j] != null){
+			var prevCell = prev[i][j];
+			x = prevCell[0];
+			y = prevCell[1];
+			// Loop through and illuminate each cell in between [i, j] and [x, y]
+			// Horizontal
+			if ((i - x) == 0){
+				// Move right
+				if (j < y){
+					for (var k = j; k < y; k++){
+						cellsToAnimate.push( [[i, k], "success"] );
+					}
+				// Move left
+				} else {
+					for (var k = j; k > y; k--){
+						cellsToAnimate.push( [[i, k], "success"] );
+					}
+				}
+			// Vertical
+			} else {
+				// Move down
+				if (i < x){
+					for (var k = i; k < x; k++){
+						cellsToAnimate.push( [[k, j], "success"] );
+					}
+				// Move up
+				} else {
+					for (var k = i; k > x; k--){
+						cellsToAnimate.push( [[k, j], "success"] );
+					}
+				}
+			}
+			i = prevCell[0];
+			j = prevCell[1];
+			//Make sure to make i and j = prev cell's coords
+			cellsToAnimate.push( [[i, j], "success"] );
+		}
+	}
+	return pathFound;
+}
+
+// NEED TO WRITE FUNCTION FOR CHECK FORCED NEIGHBOR
+// ALSO NEED TO MAKE SURE SCANNING IS CORRECT - DEBUG IT BEFORE PROCEDDING
+// In function, will need to check for forced neighbor for start cell
+function pruneNeighbors(i, j, visited, walls){
+	var neighbors = [];
+	var stored = {};
+	// Scan horizontally
+	for (var num = 0; num < 2; num++){
+		if (!num){
+			var direction = "right";
+			var increment = 1;
+			//console.log("Scanning in the right direction for " + JSON.stringify([i, j]));
+		} else {
+			var direction = "left";
+			var increment = -1;
+			//console.log("Scanning in the left direction for [" + JSON.stringify([i, j]));
+		}
+		for (var c = j + increment; (c < totalCols) && (c >= 0); c += increment){
+			var xy = i + "-" + c;
+			//console.log("Checking cell " + JSON.stringify([i, c]));
+			//console.log("Neighbors =  " + JSON.stringify(neighbors));
+			//console.log("Stored =  " + JSON.stringify(stored));
+			if (visited[i][c]){	
+				//console.log("Cell has already been visited.");
+				break; 
+			}
+			// Check if target cell or in same row/col as target cell
+			if ((endCell[0] == i || endCell[1] == c) && !stored[xy]){
+				//console.log("Target cell's row/col has been found! Adding cell to neighbors.");
+				neighbors.push([i, c]);
+				stored[xy] = true;
+				continue;
+			}
+			// Check if dead end
+			var deadEnd = !(xy in stored) && ((direction == "left" && (c > 0) && walls[i][c - 1]) || (direction == "right" && c < (totalCols - 1) && walls[i][c + 1]) || (c == totalCols - 1) || (c == 0));  
+			if (deadEnd){
+				//console.log("Cell is a deadend. Adding to neighbors.");
+				neighbors.push([i, c]);
+				stored[xy] = true;
+				break;
+			}
+			//Check for forced neighbors
+			var validForcedNeighbor = (direction == "right" && c < (totalCols - 1) && (!walls[i][c + 1])) || (direction == "left" && (c > 0) && (!walls[i][c - 1]));
+			if (validForcedNeighbor){
+				//console.log("Cell next to it could be a forced neighbor. Checking.");
+				checkForcedNeighbor(i, c, direction, neighbors, walls, stored);
+			}
+		}
+	}
+	// Scan vertically
+	for (var num = 0; num < 2; num++){
+		if (!num){
+			var direction = "down";
+			var increment = 1;
+			//console.log("Scanning in the down direction for [" + JSON.stringify([i, j]));
+		} else {
+			var direction = "up";
+			var increment = -1;
+			//console.log("Scanning in the up direction for [" + JSON.stringify([i, j]));
+		}
+		for (var r = i + increment; (r < totalRows) && (r >= 0); r += increment){
+			var xy = r + "-" + j;
+			//console.log("Checking cell " + JSON.stringify([r, j]));
+			//console.log("Neighbors =  " + JSON.stringify(neighbors));
+			//console.log("Stored =  " + JSON.stringify(stored));
+			if (visited[r][j]){	
+				//console.log("Cell has already been visited or is stored.");
+				break; 
+			}
+			// Check if target cell or in same row/col as target cell
+			if ((endCell[0] == r || endCell[1] == j) && !stored[xy]){
+				//console.log("Target cell's row/col has been found! Adding cell to neighbors.");
+				neighbors.push([r, j]);
+				stored[xy] = true;
+				continue;
+			}
+			// Check if dead end
+			var deadEnd = !(xy in stored) && ((direction == "up" && (r > 0) && walls[r - 1][j]) || (direction == "down" && r < (totalRows - 1) && walls[r + 1][j]) || (r == totalRows - 1) || (r == 0));  
+			if (deadEnd){
+				//console.log("Cell is a deadend. Adding to neighbors.");
+				neighbors.push([r, j]);
+				stored[xy] = true;
+				break;
+			}
+			//Check for forced neighbors
+			var validForcedNeighbor = (direction == "down" && (r < (totalRows - 1)) && (!walls[r + 1][j])) || (direction == "up" && (r > 0) && (!walls[r - 1][j]));
+			if (validForcedNeighbor){
+				//console.log("Cell next to it could be a forced neighbor. Checking.");
+				checkForcedNeighbor(r, j, direction, neighbors, walls, stored);
+			}
+		}
+	}
+	//console.log("Final neighbors = " + JSON.stringify(neighbors));
+	return neighbors;
+}
+
+function checkForcedNeighbor(i, j, direction, neighbors, walls, stored){
+	//console.log(JSON.stringify(walls));
+	if (direction == "right"){
+		var isForcedNeighbor = ((i > 0) && walls[i - 1][j] && (!walls[i - 1][j + 1])) || ((i < (totalRows - 1)) &&  walls[i + 1][j] && (!walls[i + 1][j + 1]));
+		var neighbor = [i, j + 1];
+	} else if (direction == "left"){
+		var isForcedNeighbor = ((i > 0) && walls[i - 1][j] && !walls[i - 1][j - 1]) || ((i < (totalRows - 1)) && walls[i + 1][j] && !walls[i + 1][j - 1]);
+		var neighbor = [i, j - 1];
+	} else if (direction == "up"){
+		var isForcedNeighbor = ((j < (totalCols - 1)) && walls[i][j + 1] && !walls[i - 1][j + 1]) || ((j > 0) && walls[i][j - 1] && !walls[i - 1][j - 1]);
+		var neighbor = [i - 1, j];
+	} else {
+		var isForcedNeighbor = ((j < (totalCols - 1)) && walls[i][j + 1] && !walls[i + 1][j + 1]) || ((j > 0) && walls[i][j - 1] && !walls[i + 1][j - 1]);
+		var neighbor = [i + 1, j];
+	}
+	var xy = neighbor[0] + "-" + neighbor[1];
+	if (isForcedNeighbor && !stored[xy]){
+		//console.log("Neighbor " + JSON.stringify(neighbor) + " is forced! Adding to neighbors and stored.")
+		neighbors.push(neighbor);
+		stored[xy] = true;
+	} else {
+		//console.log("Is not a forced neighbor..");
+	}
+	//return;
 }
 
 function greedyBestFirstSearch() {
