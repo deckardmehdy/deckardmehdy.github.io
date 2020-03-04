@@ -2,8 +2,10 @@
 <html>
 <head>
 	<title>myPath</title>
-	<link rel="stylesheet" type="text/css" href="styles.css">
+	<link rel="stylesheet" type="text/css" href="styles/main.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="styles/magic.min.css">
+	<script src="https://kit.fontawesome.com/d1f3dd87b7.js" crossorigin="anonymous"></script>
 </head>
 <body>
 	<nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-dark" id="myNavbar">
@@ -124,7 +126,7 @@
 						    <h5 class="card-title">What is myPath?</h5>
 						    <p class="card-text">
 						    <em>myPath is a visualizing tool that shows how different pathfinding algorithms work. 
-						    <p>The program's objective is to go from the start node to the end node using a pathfinding algorithm. The program can only move horizontally and vertically, with each movement having a cost of one.</p>
+						    <p>The program's objective is to go from the start node to the end node using a pathfinding algorithm. The program can only move horizontally or vertically, with each movement having a cost of one.</p>
 
 						    <p>Once the program is complete, the shortest path will be illuminated in yellow.
 						    </p>
@@ -182,6 +184,19 @@
 		    </div>
 		  </div>
 		</div>
+	</div>
+
+	<div class ="d-flex flex-column" id="results">
+		<div class="d-flex justify-content-center"> 
+			<i id="resultsIcon" class="fas fa-exclamation"></i>
+		</div>
+		<div id="duration" class="d-flex justify-content-center"> 
+	 		Please select an algorithm and press start.
+	 	</div>
+	 	<div id="length" class="d-flex justify-content-center"> 	
+	 	</div>	 	
+	</div>
+
 
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

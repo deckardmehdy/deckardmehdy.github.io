@@ -4,9 +4,9 @@
 // Add more algorithms (research)
 // Add more maze creation functions
 	// Do pure horizontal and pure vertical maze
-// update update span... bug and changes the span contents of everything... have it edit an ID
-// ADD COMPUTATION TIME
 // Put moveable start and end points in tutorial
+// Make update results display warning when algo not selected with warnning sign
+// Have (?) info at bottom that displays information about different algorithms
 /* ------------------------------------ */
 /* ---- Var Declarations & Preamble---- */
 /* ------------------------------------ */
@@ -147,10 +147,10 @@ $( "td" ).mousedown(function(){
 		}
 		if (index == startCellIndex){
 			movingStart = true;
-			console.log("Now moving start!");
+			//console.log("Now moving start!");
 		} else if (index == endCellIndex){
 			movingEnd = true;
-			console.log("Now moving end!");
+			//console.log("Now moving end!");
 		} else {
 			createWalls = true;
 		}
@@ -173,7 +173,7 @@ $( "td" ).mouseenter(function() {
     		clearBoard( keepWalls = true );
     		justFinished = false;
     	}
-    	console.log("Cell index = " + index);
+    	//console.log("Cell index = " + index);
     	if (movingStart && index != endCellIndex) {
     		moveStartOrEnd(startCellIndex, index, "start");
     	} else if (movingEnd && index != startCellIndex) {
@@ -208,7 +208,7 @@ $( "body" ).mouseup(function(){
 /* ----------------- */
 
 $( "#startBtn" ).click(function(){
-    if ( algorithm == null ){ $("span").text("Please select an algorithm first."); return;}
+    if ( algorithm == null ){ return;}
     if ( inProgress ){ update("wait"); return; }
 	traverseGraph(algorithm);
 });
@@ -312,31 +312,63 @@ function updateStartBtnText(){
 	return;
 }
 
-function update(update){
-	//$("#update").show();
-	if (update == "success"){
-		$("#update").text("Success! Found the last cell! Yay!");
-	} else if (update == "searching"){
-		$("#update").text("Trying to find the last cell...");
-	} else if (update == "failure"){
-		$("#update").text("Oh no! The last cell couldn't be found!");
-	} else if (update == "wait"){
-		$("#update").text("Please wait for the algorithm to finish.");
+// Used to display error messages
+function update(message){
+	$("#resultsIcon").removeClass();
+	$("#resultsIcon").addClass("fas fa-exclamation");
+	$('#results').css("background-color", "#ffc107");
+	$("#length").text("");
+	if (message == "wait"){
+		$("#duration").text("Please wait for the algorithm to finish.");
 	}
+}
+
+// Used to display results
+function updateResults(duration, pathFound, length){
+	var firstAnimation = "swashOut";
+	var secondAnimation = "swashIn";
+	$("#results").removeClass();
+    $("#results").addClass("magictime " + firstAnimation); 
+    setTimeout(function(){ 
+    	$("#resultsIcon").removeClass();
+    	//$("#results").css("height","80px");
+    	if (pathFound){
+    		$('#results').css("background-color", "#77dd77");
+    		$("#resultsIcon").addClass("fas fa-check");
+    	} else {
+    		$('#results').css("background-color", "#ff6961");
+    		$("#resultsIcon").addClass("fas fa-times");
+    	}
+    	$("#duration").text("Duration: " + duration + " ms");
+    	$("#length").text("Length: " + countLength());
+    	$('#results').removeClass(firstAnimation);
+    	$('#results').addClass(secondAnimation); 
+    }, 1100);
+}
+
+// Counts length of success
+function countLength(){
+	var cells = $("td");
+	var l = 0;
+	for (var i = 0; i < cells.length; i++){
+		if ($(cells[i]).hasClass("success")){
+			l++;
+		}
+	}
+	return l;
 }
 
 async function traverseGraph(algorithm){
     inProgress = true;
-    update("searching");
 	clearBoard( keepWalls = true );
+	var startTime = Date.now();
 	var pathFound = executeAlgo();
+	var endTime = Date.now();
 	await animateCells();
 	if ( pathFound ){ 
-		update("success");
-		await flash("green"); 
+		updateResults((endTime - startTime), true, 6);
 	} else {
-		update("failure");
-		await flash("red"); 
+		updateResults((endTime - startTime), false, 6);
 	}
 	inProgress = false;
 	justFinished = true;
@@ -397,7 +429,6 @@ function cellIsAWall(i, j, cells){
 function DFS(i, j, visited){
 	if (i == endCell[0] && j == endCell[1]){
 		cellsToAnimate.push( [[i, j], "success"] );
-		update("success");
 		return true;
 	}
 	visited[i][j] = true;
@@ -435,8 +466,6 @@ function BFS(){
 		cellsToAnimate.push( [cell, "visited"] );
 		if (r == endCell[0] && c == endCell[1]){
 			pathFound = true;
-			//console.log("I found the last node!");
-			update("success");
 			break;
 		}
 		// Put neighboring cells in queue
@@ -492,8 +521,6 @@ function dijkstra() {
 		cellsToAnimate.push([[i, j], "visited"]);
 		if (i == endCell[0] && j == endCell[1]){
 			pathFound = true;
-			//console.log("I found the last node!");
-			update("success");
 			break;
 		}
 		var neighbors = getNeighbors(i, j);
@@ -557,7 +584,6 @@ function AStar() {
 		cellsToAnimate.push([[i, j], "visited"]);
 		if (i == endCell[0] && j == endCell[1]){
 			pathFound = true;
-			update("success");
 			break;
 		}
 		var neighbors = getNeighbors(i, j);
@@ -623,10 +649,8 @@ function jumpPointSearch() {
 		cellsToAnimate.push([[i, j], "visited"]);
 		if (i == endCell[0] && j == endCell[1]){
 			pathFound = true;
-			update("success");
 			break;
 		}
-		//var neighbors = getNeighbors(i, j);
 		var neighbors = pruneNeighbors(i, j, visited, walls);
 		for (var k = 0; k < neighbors.length; k++){
 			var m = neighbors[k][0];
@@ -693,16 +717,12 @@ function jumpPointSearch() {
 			}
 			i = prevCell[0];
 			j = prevCell[1];
-			//Make sure to make i and j = prev cell's coords
 			cellsToAnimate.push( [[i, j], "success"] );
 		}
 	}
 	return pathFound;
 }
 
-// NEED TO WRITE FUNCTION FOR CHECK FORCED NEIGHBOR
-// ALSO NEED TO MAKE SURE SCANNING IS CORRECT - DEBUG IT BEFORE PROCEDDING
-// In function, will need to check for forced neighbor for start cell
 function pruneNeighbors(i, j, visited, walls){
 	var neighbors = [];
 	var stored = {};
@@ -711,24 +731,15 @@ function pruneNeighbors(i, j, visited, walls){
 		if (!num){
 			var direction = "right";
 			var increment = 1;
-			//console.log("Scanning in the right direction for " + JSON.stringify([i, j]));
 		} else {
 			var direction = "left";
 			var increment = -1;
-			//console.log("Scanning in the left direction for [" + JSON.stringify([i, j]));
 		}
 		for (var c = j + increment; (c < totalCols) && (c >= 0); c += increment){
 			var xy = i + "-" + c;
-			//console.log("Checking cell " + JSON.stringify([i, c]));
-			//console.log("Neighbors =  " + JSON.stringify(neighbors));
-			//console.log("Stored =  " + JSON.stringify(stored));
-			if (visited[i][c]){	
-				//console.log("Cell has already been visited.");
-				break; 
-			}
-			// Check if target cell or in same row/col as target cell
+			if (visited[i][c]){	break; }
+			//Check if same row or column as end cell
 			if ((endCell[0] == i || endCell[1] == c) && !stored[xy]){
-				//console.log("Target cell's row/col has been found! Adding cell to neighbors.");
 				neighbors.push([i, c]);
 				stored[xy] = true;
 				continue;
@@ -736,7 +747,6 @@ function pruneNeighbors(i, j, visited, walls){
 			// Check if dead end
 			var deadEnd = !(xy in stored) && ((direction == "left" && (c > 0) && walls[i][c - 1]) || (direction == "right" && c < (totalCols - 1) && walls[i][c + 1]) || (c == totalCols - 1) || (c == 0));  
 			if (deadEnd){
-				//console.log("Cell is a deadend. Adding to neighbors.");
 				neighbors.push([i, c]);
 				stored[xy] = true;
 				break;
@@ -744,7 +754,6 @@ function pruneNeighbors(i, j, visited, walls){
 			//Check for forced neighbors
 			var validForcedNeighbor = (direction == "right" && c < (totalCols - 1) && (!walls[i][c + 1])) || (direction == "left" && (c > 0) && (!walls[i][c - 1]));
 			if (validForcedNeighbor){
-				//console.log("Cell next to it could be a forced neighbor. Checking.");
 				checkForcedNeighbor(i, c, direction, neighbors, walls, stored);
 			}
 		}
@@ -754,24 +763,14 @@ function pruneNeighbors(i, j, visited, walls){
 		if (!num){
 			var direction = "down";
 			var increment = 1;
-			//console.log("Scanning in the down direction for [" + JSON.stringify([i, j]));
 		} else {
 			var direction = "up";
 			var increment = -1;
-			//console.log("Scanning in the up direction for [" + JSON.stringify([i, j]));
 		}
 		for (var r = i + increment; (r < totalRows) && (r >= 0); r += increment){
 			var xy = r + "-" + j;
-			//console.log("Checking cell " + JSON.stringify([r, j]));
-			//console.log("Neighbors =  " + JSON.stringify(neighbors));
-			//console.log("Stored =  " + JSON.stringify(stored));
-			if (visited[r][j]){	
-				//console.log("Cell has already been visited or is stored.");
-				break; 
-			}
-			// Check if target cell or in same row/col as target cell
+			if (visited[r][j]){	break; }
 			if ((endCell[0] == r || endCell[1] == j) && !stored[xy]){
-				//console.log("Target cell's row/col has been found! Adding cell to neighbors.");
 				neighbors.push([r, j]);
 				stored[xy] = true;
 				continue;
@@ -779,7 +778,6 @@ function pruneNeighbors(i, j, visited, walls){
 			// Check if dead end
 			var deadEnd = !(xy in stored) && ((direction == "up" && (r > 0) && walls[r - 1][j]) || (direction == "down" && r < (totalRows - 1) && walls[r + 1][j]) || (r == totalRows - 1) || (r == 0));  
 			if (deadEnd){
-				//console.log("Cell is a deadend. Adding to neighbors.");
 				neighbors.push([r, j]);
 				stored[xy] = true;
 				break;
@@ -787,12 +785,10 @@ function pruneNeighbors(i, j, visited, walls){
 			//Check for forced neighbors
 			var validForcedNeighbor = (direction == "down" && (r < (totalRows - 1)) && (!walls[r + 1][j])) || (direction == "up" && (r > 0) && (!walls[r - 1][j]));
 			if (validForcedNeighbor){
-				//console.log("Cell next to it could be a forced neighbor. Checking.");
 				checkForcedNeighbor(r, j, direction, neighbors, walls, stored);
 			}
 		}
 	}
-	//console.log("Final neighbors = " + JSON.stringify(neighbors));
 	return neighbors;
 }
 
@@ -826,16 +822,13 @@ function greedyBestFirstSearch() {
 	var pathFound = false;
 	var myHeap = new minHeap();
 	var prev = createPrev();
-	//var distances = createDistances();
 	var costs = createDistances();
 	var visited = createVisited();
-	//distances[ startCell[0] ][ startCell[1] ] = 0;
 	costs[ startCell[0] ][ startCell[1] ] = 0;
 	myHeap.push([0, [startCell[0], startCell[1]]]);
 	cellsToAnimate.push([[startCell[0], startCell[1]], "searching"]);
 	while (!myHeap.isEmpty()){
 		var cell = myHeap.getMin();
-		//console.log("Min was just popped from the heap! Heap is now: " + JSON.stringify(myHeap.heap));
 		var i = cell[1][0];
 		var j = cell[1][1];
 		if (visited[i][j]){ continue; }
@@ -843,8 +836,6 @@ function greedyBestFirstSearch() {
 		cellsToAnimate.push([[i, j], "visited"]);
 		if (i == endCell[0] && j == endCell[1]){
 			pathFound = true;
-			//console.log("I found the last node!");
-			update("success");
 			break;
 		}
 		var neighbors = getNeighbors(i, j);
@@ -852,15 +843,6 @@ function greedyBestFirstSearch() {
 			var m = neighbors[k][0];
 			var n = neighbors[k][1];
 			if (visited[m][n]){ continue; }
-			/*
-			var newDistance = distances[i][j] + 1;
-			if (newDistance < distances[m][n]){
-				distances[m][n] = newDistance;
-				prev[m][n] = [i, j];
-				//console.log("New cell was added to the heap! It has distance = " + newDistance + ". Heap = " + JSON.stringify(myHeap.heap));
-				cellsToAnimate.push( [[m, n], "searching"] );
-			}
-			*/
 			var newCost = Math.abs(endCell[0] - m) + Math.abs(endCell[1] - n);
 			if (newCost < costs[m][n]){
 				prev[m][n] = [i, j];
@@ -869,9 +851,7 @@ function greedyBestFirstSearch() {
 				cellsToAnimate.push([[m, n], "searching"]);
 			}
 		}
-		//console.log("Cell [" + i + ", " + j + "] was just evaluated! myHeap is now: " + JSON.stringify(myHeap.heap));
 	}
-	//console.log(JSON.stringify(myHeap.heap));
 	// Make any nodes still in the heap "visited"
 	while ( !myHeap.isEmpty() ){
 		var cell = myHeap.getMin();
@@ -1111,7 +1091,7 @@ async function animateCells(){
 	//console.log("End of animation has been reached!");
 	return new Promise(resolve => resolve(true));
 }
-
+/*
 async function flash(color){
 	var item = "#logo";
 	var originalColor = $(item).css("color");
@@ -1128,6 +1108,7 @@ async function flash(color){
 	$(item).css("color", originalColor);
 	return new Promise(resolve => resolve(true));
 }
+*/
 
 function getDelay(){
 	var delay;
