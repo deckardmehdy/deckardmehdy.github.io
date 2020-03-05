@@ -1,12 +1,16 @@
 //Things to do:
 // Get rid of update span and just update with info about algo
-	// inception dates, fun trivia facts
+	// inception dates, fun trivia facts?
 // Add more algorithms (research)
+	// Bidirectional depth first search
+	// Bidirectional A*?
+	// Bidirectional breadth first search
 // Add more maze creation functions
 	// Do pure horizontal and pure vertical maze
-// Put moveable start and end points in tutorial
-// Make update results display warning when algo not selected with warnning sign
+	// Do spiral maze from middle?
 // Have (?) info at bottom that displays information about different algorithms
+// PUT on github that this is only accessable for browers (not mobiles) and certain desktops
+// Create posts on leetcode, linkedIn
 /* ------------------------------------ */
 /* ---- Var Declarations & Preamble---- */
 /* ------------------------------------ */
@@ -248,7 +252,9 @@ $( "#mazes .dropdown-item").click(function(){
 		recursiveDivMaze("VERTICAL");
 	} else if (maze == "Recursive Division (Horizontal Skew)"){
 		recursiveDivMaze("HORIZONTAL");
-	} 
+	} else if (maze == "Simple Spiral"){
+		spiralMaze();
+	}
 	console.log("Maze has been changd to: " + maze);
 });
 
@@ -914,6 +920,40 @@ async function randomMaze(){
 	await animateCells();
 	inProgress = false;
 	return;
+}
+
+async function spiralMaze(){
+	inProgress = true;
+	clearBoard(keepWalls = false);
+
+	var length = 1;
+	var direction = {
+		"0": [-1, 1],  //northeast
+		"1": [1, 1],   //southeast
+		"2": [1, -1],  //southwest
+		"3": [-1, -1], //northwest
+	};
+	var cell = [Math.floor(totalRows / 2), Math.floor(totalCols / 2)];
+	while (inBounds(cell)){
+		var i_increment = direction[length % 4][0];
+		var j_increment = direction[length % 4][1];
+		for (var count = 0; count < length; count++){
+			var i = cell[0];
+			var j = cell[1];
+			cellsToAnimate.push( [[i, j], "wall"] );
+			cell[0] += i_increment;
+			cell[1] += j_increment;
+			if (!inBounds(cell)){ break; }
+		}
+		length += 1;
+	}
+	await animateCells();
+	inProgress = false;
+	return;
+}
+
+function inBounds(cell){
+	return (cell[0] >= 0 && cell[1] >= 0 && cell[0] < totalRows && cell[1] < totalCols);
 }
 
 async function recursiveDivMaze(bias){
