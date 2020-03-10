@@ -103,3 +103,11 @@ ul {
 #duration, #length {
 	padding: 3px;
 }
+
+#infoModalBtn {
+	margin-left: 20px;
+}
+
+.fun-fact {
+	color: darkgreen;
+}

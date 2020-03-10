@@ -1,6 +1,4 @@
 //Things to do:
-// Get rid of update span and just update with info about algo
-	// inception dates, fun trivia facts?
 // Add more algorithms (research)
 	// Bidirectional depth first search
 	// Bidirectional A*?
@@ -8,9 +6,6 @@
 // Add more maze creation functions
 	// Do pure horizontal and pure vertical maze
 	// Do spiral maze from middle?
-// Have (?) info at bottom that displays information about different algorithms
-// PUT on github that this is only accessable for browers (not mobiles) and certain desktops
-// Create posts on leetcode, linkedIn
 /* ------------------------------------ */
 /* ---- Var Declarations & Preamble---- */
 /* ------------------------------------ */
@@ -346,7 +341,7 @@ function updateResults(duration, pathFound, length){
     		$("#resultsIcon").addClass("fas fa-times");
     	}
     	$("#duration").text("Duration: " + duration + " ms");
-    	$("#length").text("Length: " + countLength());
+    	$("#length").text("Length: " + length);
     	$('#results').removeClass(firstAnimation);
     	$('#results').addClass(secondAnimation); 
     }, 1100);
@@ -372,9 +367,9 @@ async function traverseGraph(algorithm){
 	var endTime = Date.now();
 	await animateCells();
 	if ( pathFound ){ 
-		updateResults((endTime - startTime), true, 6);
+		updateResults((endTime - startTime), true, countLength());
 	} else {
-		updateResults((endTime - startTime), false, 6);
+		updateResults((endTime - startTime), false, countLength());
 	}
 	inProgress = false;
 	justFinished = true;

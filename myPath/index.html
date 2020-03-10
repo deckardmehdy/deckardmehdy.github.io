@@ -92,11 +92,11 @@
 		<!-- <div id="update">Click or drag cells to build walls. <br/>Press the 'Start' button when you finish and have selected an algorithm.</div> -->
  	</div>
 
- 	<div class="d-flex flex-row m-4 justify-content-around">
-		<!-- Button trigger modal -->
+ 	<div class="d-flex flex-row m-4 justify-content-center">
+		<!-- Button trigger for tutorial modal -->
 		<button type="button" class="btn btn-outline-info btn-lg" data-toggle="modal" data-target="#exampleModalLong">Tutorial</button>
 
-		<!-- Modal -->
+		<!-- Tutorial Modal -->
 		<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
 		  <div class="modal-dialog" role="document">
 		    <div class="modal-content">
@@ -139,6 +139,7 @@
 						  <div class="card-body">
 						    <h5 class="card-title">Step 1: Choose An Algorithm</h5>
 						    <p class="card-text">Click the 'Algorithms' tab and select one of the algorithms from the dropdown menu.</p>
+						    <p><i>If you want to learn more about the algorithms listed, then click the 'Info' button that is located at the bottom of the page.</i></p>
 						  </div>
 						  <img class="card-img-bottom" src="images/algorithms.gif" alt="Card image cap" style="height: 20em">
 						</div>
@@ -188,6 +189,169 @@
 		        	</div>
 		        </div>
 		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- Button Trigger for Info Modal -->
+		<button type="button" class="btn btn-outline-success btn-circle btn-lg" data-toggle="modal" data-target="#infoModal" id="infoModalBtn">Info</button>
+
+		<!-- Button Trigger for Info Modal -->
+		<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		      	<div class="container-fluid">
+		        	<h5 class="modal-title">Algorithms</h5>
+		        </div>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="container-fluid">
+		      	This section gives brief summaries for each of the maze solving algorithms listed under the Algorithms tab.
+		      	<br>
+		      	<br>
+		        <div id="accordion">
+				  <div class="card">
+				    <div class="card-header" id="headingOne">
+				      <h5 class="mb-0">
+				        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+				          Depth-First Search (DFS)
+				        </button>
+				      </h5>
+				    </div>
+
+				    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+				      <div class="card-body">
+				        <p>
+				        	<b>How It Works: </b> DFS starts at the root node and explores as far as possible along each branch before backtracking.
+				        </p>
+				        <p>
+				        	<b>Analysis: </b> This is a poor algorithm for pathfinding. It is <u>unweighted</u> and does <u>not</u> guarantee the shortest path.
+				        </p>
+				        <p class="fun-fact">
+				        	<i><b>Fun Fact: </b> This algorithm was first investigated in the 19th century by French Mathematician Charles Trémaux.</i>
+				        </p>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="card">
+				    <div class="card-header" id="headingTwo">
+				      <h5 class="mb-0">
+				        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+				          Breadth-First Search (BFS)
+				        </button>
+				      </h5>
+				    </div>
+				    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+				      <div class="card-body">
+				        <p>
+				        	<b>How It Works: </b> BFS starts at the root node and explores all of the neighbor nodes at the present depth prior to moving on to the nodes at the next depth level.
+				        </p>
+				        <p>
+				        	<b>Analysis: </b> This is an OK algorithm for pathfinding. It is <u>unweighted</u> but <u>guarantees</u> the shortest path.
+				        </p>
+				        <p class="fun-fact">
+				        	<i><b>Fun Fact: </b> This algorithm was first invented in 1945 by Konrad Zuse and was submitted in his rejected PhD thesis, but was not published until 1972.</i>
+				        </p>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="card">
+				    <div class="card-header" id="headingThree">
+				      <h5 class="mb-0">
+				        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+				          Dijkstra
+				        </button>
+				      </h5>
+				    </div>
+				    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+				      <div class="card-body">
+				        <p>
+				        	<b>How It Works: </b> In Dijkstra's algorithm, all of the nodes in the graph (except the starting node) are initialized with a distance equal to 'infinity.' These distances represents the cost to get from the starting node to the current node, with the starting node having a distance of zero. At the beginning of each iteration, the node with the smallest distance that hasn't been explored yet is visited. These nodes are stored in a min-heap data structure. When a node is visited, all of the neighbors' distances are updated, and if any of the neighbor's distances are lessened, then the algorithm pushes the node onto the min-heap. This continues until the end node has been reached.
+				        </p>
+				        <p>
+				        	<b>Analysis: </b> This is an OK algorithm for pathfinding. This algorithm performs very well in trees with unequal distances between nodes. But since this program only explores horizontally/vertically (with each move costing one), it behaves exactly the same as BFS. It is <u>unweighted</u> but <u>guarantees</u> the shortest path.
+				        </p>
+				        <p class="fun-fact">
+				        	<i><b>Fun Fact: </b> Edsger Dijkstra invented this algorithm in twenty minutes.</i>
+				        </p>
+				      </div>
+				    </div>
+				  </div>
+
+				  <div class="card">
+				    <div class="card-header" id="headingFour">
+				      <h5 class="mb-0">
+				        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+				          Greedy Best-First Search
+				        </button>
+				      </h5>
+				    </div>
+				    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+				      <div class="card-body">
+				        <p>
+				        	<b>How It Works:</b> GBFS tries to expand the node that is closest to the goal, on the grounds that this is likely to lead to a solution quickly. It evaluates nodes on a heuristic function, which in myPath is the Euclidean distance from the current node to the end node. 
+				        </p>
+				        <p>
+				        	<b>Analysis: </b>This is a poor algorithm for pathfinding. It is <u>weighted</u> but does <u>not</u> guarantee the shortest path. 
+				        </p>
+				      </div>
+				    </div>
+				  </div>
+
+				  <div class="card">
+				    <div class="card-header" id="headingFive">
+				      <h5 class="mb-0">
+				        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+				          A*
+				        </button>
+				      </h5>
+				    </div>
+				    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+				      <div class="card-body">
+				        <p>
+				        	<b>How It Works: </b> A* uses the same min-heap data structure that is implimented in Dijkstra's, but it expands upon Dijkstra's criteria for selecting the next node to explore. Dijkstra's chooses the node with the smallest distance from the starting node to be explored next. However, A* ranks nodes differently: it has a heuristic function that evaluates how far a node has traveled from the starting node <u>and</u> how far it is from the end node. This heuristic function makes the algorithm 'smart' since it is able to expand in a direction of interest. My implimentation of A* uses Euclidean distance for the end node distance calculation.
+				        </p>
+				        <p>
+				        	<b>Analysis: </b> This is the one of the best algorithms for pathfinding. It is <u>weighted</u> and it <u>guarantees</u> the shortest path.
+				        </p>
+				        <p class="fun-fact">
+				        	<i><b>Fun Fact: </b> A* was first created for the 'Shakey Project', which had the aim of building a mobile robot that could plan its own actions. It was later published in 1968 by Stanford Research Institute scientists.</i>
+				        </p>
+				      </div>
+				    </div>
+				  </div>
+
+				  <div class="card">
+				    <div class="card-header" id="headingSix">
+				      <h5 class="mb-0">
+				        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+				          Jump Point Search
+				        </button>
+				      </h5>
+				    </div>
+				    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordion">
+				      <div class="card-body">
+				        <p>
+				        	<b>How It Works: </b> Jump Point Search is an optimization of A* for uniform cost grids. It reduces symmertries in the search procedure by graph pruning, which eliminates certain nodes to explore based on the assumptions that can be made about the current node's neighbors (as long as certain conditions are satisfied). My implimentation only considers straight horizontal and vertical 'jumps.' In the original JPS paper, it also considers diagonal jumps, but since my program only moves horizontally and vertically, I decided to not impliment diagonal jumps. This made the algorithm non-optimal, sometimes resulting in the algorithm not being able to find the end node. Despite this, I decided to leave this algorithm in myPath to demonstrate the different types of algorithms out there. 
+				        </p>
+				        <p>
+				        	<b>Analysis: </b> This is a great algorithm for pathfinding when there is an explicit maze drawn. It is <u>weighted</u>, but it does <u>not</u> guarantee the shortest path.
+				        </p>
+				        <p class="fun-fact">
+				        	<i><b>Fun Fact: </b> JPS was first published in 2011, which is more than 40 years after A* was first published.</i>
+				        </p>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+		      </div>
+		  	  </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 		      </div>
