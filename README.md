@@ -6,3 +6,5 @@ Hi everyone! This is a repository for my projects. To view them, click the links
   * https://deckardmehdy.github.io/myPath/
    * **Pathfinding Algorithms:** A*; Breadth-First Search; Depth-First Search; Greedy Best-First Search; Modified Jump Point Search; Dijkstra.
    * **Maze Generating Algorithms:** Random (uses recursive backtracking); Recursive Division; Recursive Division (horizontal skew); Recursive Division (vertical skew); Simple Spiral.
+* **Hex** (*HTML, CSS, JavaScript, and jQuery*):
+  *  https://deckardmehdy.github.io/Hex/
