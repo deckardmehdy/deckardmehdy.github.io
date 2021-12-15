@@ -728,7 +728,7 @@ $( "#reset" ).click(function(){
 }
 );
 
-$( "#playMove" ).click( function(){
+$( "#playMove" ).click( async function(){
 	if ( frozen ){ return; }
 	var [row, col] = getCoords( selectedHexagon );
 	if( isEmpty(row, col) ){
