@@ -96,10 +96,8 @@ class minMaxTree {
 	getDepth (){
 		if ( difficulty == "normal" ){
 			return 2;
-		} else if ( difficulty == "hard" ){
-			return 3;
 		} else {
-			return 4;
+			return 3;
 		}
 	}
 
@@ -485,7 +483,11 @@ function startGame(){
 
 	if ( playerUser == 2 ){
 		//makeRobotMove();
-		setTimeout(function(){ makeRobotMove(); }, 1000); // robot goes first
+		waitingModal( 'show' );
+		setTimeout(function(){ 
+			makeRobotMove(); 
+			waitingModal( 'hide' );
+		}, 1000); // robot goes first
 	}
 }
 
@@ -663,18 +665,12 @@ function waitingModal(action ){
 
 /* Makes the robot's next move */
 function makeRobotMove(){
-	//console.log("-----------------"); 
-	waitingModal( 'show' );
-
-	setTimeout(function(){
-		let myTree = new minMaxTree();
-		var [ x, y ] = myTree.getNextMove( playerRobot ); 
-		//console.log("Move selected -> [ "+x+" ,"+y+" ]");
-		//console.log("Probability of winning -> " + myTree.probOfWinning );
-		updateProgressBar( myTree.probOfWinning );
-		playMove( x, y, hexBoardPtrs[x][y], playerRobot );
-		waitingModal( 'hide' );
-	}, 1000);
+	let myTree = new minMaxTree();
+	var [ x, y ] = myTree.getNextMove( playerRobot ); 
+	//console.log("Move selected -> [ "+x+" ,"+y+" ]");
+	//console.log("Probability of winning -> " + myTree.probOfWinning );
+	updateProgressBar( myTree.probOfWinning );
+	playMove( x, y, hexBoardPtrs[x][y], playerRobot );
 	return;
 }
 
@@ -727,20 +723,12 @@ $( "#hardBtn" ).click(function(){
 	});
 });
 
-$( "#evilBtn" ).click(function(){
-	difficulty = "evil";
-
-	$( "#difficultyMessage" ).hide("slow", function() {
-		startGame();
-	});
-});
-
 $( "#reset" ).click(function(){
 	resetGame();
 }
 );
 
-$( "#playMove" ).click(function(){
+$( "#playMove" ).click( function(){
 	if ( frozen ){ return; }
 	var [row, col] = getCoords( selectedHexagon );
 	if( isEmpty(row, col) ){
@@ -751,13 +739,16 @@ $( "#playMove" ).click(function(){
 
 		// See if user won
 		if ( !winnerFound( playerUser ) ){
-			makeRobotMove();
-			// See if robot won
-			let robotWon = winnerFound( playerRobot );
-			if ( robotWon ){
-				winningMessage( "robot" );
-				freezeBoard();
-			}
+			waitingModal( 'show' );
+			setTimeout(function(){
+				// See if robot won
+				makeRobotMove();
+				if ( winnerFound( playerRobot ) ){
+					winningMessage( "robot" );
+					freezeBoard();
+				}
+				waitingModal( 'hide' );
+			}, 1000);
 		} else {
 			winningMessage( "user" );
 			freezeBoard();
