@@ -1,12 +1,13 @@
-/* to do list:
-	- put tutorial in -> make it show winning combination for each player
-	- have spinning icon while tree produces next move - make game frozen
-		- have progress bar in popup modal that appears
-		- static backdrop modal
-		- include reset button just in case it gets frozen
-	- do documentation for each object, set of classes, and overal document
-*/
+/*
+	Hex game:
+	-> Allows for a user to battle a "robot" on a MxN Hex board
+	-> Creates a "robot" response using AI algorithm
+	-> AI algorithm works by creating and traversing a min-max tree
+	-> At each leaf node in the tree, Monte Carlo (random) simulation is done
 
+	Author: Deckard Mehdy
+	Last Edit: Dec. 14th, 2021
+*/
 
 /* ---- Declarations & Preamble---- */
 
@@ -16,8 +17,8 @@ var totalCols = 7;
 var speed = 1;
 var playerUser = null;
 var playerRobot = null;
-var p1objective = "Connect a tile from column 1 to a tile in column " + totalCols + ".";
-var p2objective = "Connect a tile from row 1 to a tile in row  " + totalRows + ".";
+var p1objective = "Connect a tile from the left of the board to the right.";
+var p2objective = "Connect a tile from the top of the board to the bottom.";
 var frozen = false;
 var difficulty = null;
 
@@ -41,9 +42,11 @@ var hexBoardPtrs = [];
 // Outcome Modal
 var userWonTitle = "Congrats! You won!"
 var userWonGIF = "<img id='winnerGIF' src='images/happy_robot.gif'></img>";
-
 var robotWonTitle = "Oh no! You lost. Try again.";
 var robotWonGIF = "<img id='winnerGIF' src='images/sad_robot.gif'></img>";
+
+// Tutorial Modal
+var showTutorial = true;
 
 /* ----FIFO Queue---- */
 
@@ -69,11 +72,6 @@ Queue.prototype.peek = function () {
 
 /* ----Min-Max Tree---- */
 
-	/* Test variables */
-
-	var showMonteCarlo = true;
-	var showCheckForWinner = true; 
-
 class minMaxTree {
 
 	constructor() {
@@ -81,25 +79,11 @@ class minMaxTree {
 		this.MAX_DEPTH = this.getDepth();
 		this.nextMove = [];
 		this.probOfWinning = 0;
-		//console.log("Hex board in constructor:");
-		//console.log(hexBoard.slice(0));
-
 		this.board = this.createBoard();
-		//console.log(" Board created from hex board: ");
-		//console.log( this.deepCopy( this.board ) );
-
 		this.visited = this.createVisited();
-		//console.log(" Visited: ");
-		//console.log( this.deepCopy( this.visited ) );
 	}
 
-	getDepth (){
-		if ( difficulty == "normal" ){
-			return 2;
-		} else {
-			return 3;
-		}
-	}
+	getDepth (){ return difficulty == "normal" ? 2 : 3; }
 
 	getNextMove ( player ) {
 		this.traverseTree( -1, -1, true, player, 0, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY );
@@ -108,58 +92,30 @@ class minMaxTree {
 
 	createVisited (){
 		let newVisited = new Array(0);
-		//console.log("Visited array at time of creation: ");
-		//console.log( newVisited.slice(0) );
 		for ( let m = 0; m < totalRows; m++ ){
 			let row = [];
 			for ( let n = 0; n < totalCols; n++ ){
 				if ( this.board[m][n] == 0 ){
 					row.push(false);
-					//console.log("Entering false");
 				} else {
 					row.push(true);
-					//console.log("Entering true");
 				}
-				//console.log( row.slice(0) );
 			}
 			newVisited.push(row);
-			//console.log("Visited array: ");
-			//console.log( newVisited.slice(0) );
 		}
 		return newVisited;
 	}
 
 	createBoard (){
-		//console.log("Hex board in create board method:");
-		//console.log( hexBoard );
 		let newBoard = [];
-		//console.log("Tree board after creating it:");
-		//console.log( newBoard.slice(0) );
 		for ( let x = 0; x < totalRows; x++ ){
 			let row = [];
 			for ( let y = 0; y < totalCols; y++ ){
-				//console.log("[ " + x + ", " + y + " ] = " + hexBoard[x][y] );
 				row.push( hexBoard[x][y] );
-				//console.log( row.slice(0) );
 			}
 			newBoard.push( row );
-			//console.log( newBoard.slice(0) );
 		}
 		return newBoard;
-	}
-
-	/* Returns a deep copy of 2-D arrays */
-	deepCopy ( arr ){
-		let deepCopy = [];
-		for ( let i = 0; i < arr.length; i++ ){
-			let row = [];
-			for ( let j = 0; j < arr[0].length; j++ ){
-				let val = arr[i][j];
-				row.push( val );
-			}
-			deepCopy.push( row );
-		}
-		return deepCopy;
 	}
 
 	traverseTree ( row, col, maximizingPlayer, player, depth, alpha, beta ) {
@@ -173,13 +129,11 @@ class minMaxTree {
 			for ( var i = 0; i < totalRows && !exit; i++ ){
 				for ( var j = 0; j < totalCols && !exit; j++ ){
 					if ( !this.visited[i][j] ){
-						//console.log( "-------------" );
-						//console.log( "Child being visited = [ " + i + ", " + j + " ] will play as player " + player + ": ");
 						this.makeMove( i, j, player );
 						var newVal = this.traverseTree( i, j, false, player, depth + 1, alpha, beta );
 						if ( val < newVal ){
 							val = newVal;
-							// root node
+							// Root node:
 							if ( depth == 0 ){ 
 								this.nextMove = [i, j];
 								this.probOfWinning = val;
@@ -196,8 +150,6 @@ class minMaxTree {
 			for ( var i = 0; i < totalRows && !exit; i++ ){
 				for ( var j = 0; j < totalCols && !exit; j++ ){
 					if ( !this.visited[i][j] ){
-						//console.log( "-------------" );
-						//console.log( "Child being visited = [ " + i + ", " + j + " ] will play as player " + player + ": ");
 						this.makeMove( i, j, this.swapPlayer(player) );
 						val = Math.min( val, this.traverseTree( i, j, true, player, depth + 1, alpha, beta ) );
 						beta = Math.min( beta, val );
@@ -220,11 +172,8 @@ class minMaxTree {
 		this.board[i][j] = 0;
 	}
 
-	swapPlayer ( player ){
-		return player == 1 ? 2 : 1;
-	}
+	swapPlayer ( player ){ return player == 1 ? 2 : 1; }
 
-	/* TEST = OK! */
 	nextMoves (){
 		var moves = [];
 		for ( var i = 0; i < totalRows; i++ ){
@@ -238,57 +187,25 @@ class minMaxTree {
 	monteCarlo ( player ) {
 		var wins = 0;
 		var moves = this.nextMoves(); 
-		if ( showMonteCarlo ){
-			//console.log( "Original moves are:" ); 
-			//console.log( moves.slice(0) );
-		}
 		for ( var i = 0; i < this.MAX_TRIALS; i++ ){
 			this.shuffle( moves );
-			if ( showMonteCarlo  && i < 2){
-				//console.log( "Shuffled moves are:" ); 
-				//console.log( moves.slice(0) );
-			}
 			var currPlayer = player;
 			for ( var j = 0; j < moves.length; j++ ){
 				this.makeMove( moves[j][0], moves[j][1], currPlayer );
 				currPlayer = this.swapPlayer(currPlayer);
-				if ( showMonteCarlo  && i < 2){
-					//console.log( "Move played on board at [" + moves[j][0] + "," + moves[j][1] + "] for player " + player + ":" ); 
-					//console.log( this.deepCopy( this.board ) );
-				}
-			}
-			if ( showMonteCarlo  && i < 2){
-				//console.log( "Finished hex game:" );
-				//console.log( this.deepCopy( this.board ) ); 
 			}
 			var winner = this.checkForWinner( 1 ) ? 1 : 2;
-			if ( showMonteCarlo  && i < 2){
-				//console.log( "Winner = " + winner);
-			}
 			if (winner == player){ wins++;}
 		}
 		for ( var j = 0; j < moves.length; j++ ){
 			this.releaseMove( moves[j][0], moves[j][1] );
 		}
-		if ( showMonteCarlo ){
-			//console.log( "Moves have been erased from the board: " );
-			//console.log( this.deepCopy( this.board ) ); 
-		}
 		var prob = wins / this.MAX_TRIALS;
-		if ( showMonteCarlo  ){
-			//console.log( "Probability of player " + player + " winning = " + prob );
-			//console.log( this.deepCopy( this.board ) ); 
-			showMonteCarlo  = false;
-		}
 		return prob;
 	}
 
 	checkForWinner ( player ){
-		if ( showCheckForWinner ){
-			//console.log("---------------------------------------------------------");
-			//console.log("Checking to see if player " + player + " is the winner...");
-		}
-		/* Create visited, cost, and prev matrices */
+		/* Create visited matrix */
 		let visited = [];
 		for (var i = 0; i < totalRows; i++){
 			var rowV = []; // row visited
@@ -296,10 +213,6 @@ class minMaxTree {
 				rowV.push( false );
 			}
 			visited.push( rowV );
-		}
-		if ( showCheckForWinner ){
-			//console.log( "Visited:" );
-			//console.log( this.deepCopy( visited ) );
 		}
 	
 		/* Queue first row/col */
@@ -317,36 +230,22 @@ class minMaxTree {
 		/* Iterate until queue is empty or winner found (Dijkstra) */
 		while ( !myQueue.isEmpty() ){ 
 			var [ row, col ] = myQueue.dequeue();
-			if ( showCheckForWinner ){
-				//console.log("---------------------------------------------------------");
-				//console.log( "[ " + row + ", " + col + " ] was taken out of the queue." );
-			}
 			if ( !visited[row][col] ){
 				visited[row][col] = true;
-				if ( showCheckForWinner ){
-					//console.log( "Node is being visited!" );
-				}
 				var neighbors = getNeighbors( row, col );
 				for ( var i = 0; i < neighbors.length; i++ ){
 					var [ neighborR, neighborC ] = neighbors[ i ];
 					if ( this.board[ neighborR ][ neighborC ] == player && !visited[neighborR][neighborC] ){
-						if ( showCheckForWinner ){
-							//console.log( "Adding [ " + neighborR + ", " + neighborC + " ] to queue." );
-						}
 						myQueue.enqueue( neighbors[ i ] );
 						let winnerFound = ( (player == 1) && (neighborC == totalCols - 1) ) || ( (player == 2) && (neighborR == totalRows - 1) );
-						if ( winnerFound ){ //console.log( "Winner was found! Player " + player + " wins!" ); 
-							return true; 
-						}
+						if ( winnerFound ){ return true; }
 					}
 				}
 			}
 		}
-		showCheckForWinner = false;
 		return false;
 	}
 
-	/* TEST -- OK! */
 	shuffle ( arr ){
 		for (let i = arr.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));
@@ -373,11 +272,10 @@ function mouseFunctions(){
 			$( this ).empty();
 			$( this ).append( emptyHexagon );
 		}
-	}
-	);
+	});
 	
 	$( ".hex" ).click(function() {
-		// Proceed if cell is valid
+		// Continue if cell is valid
 		var [row, col] = getCoords( this );
 		if (!isEmpty( row, col ) || frozen ){
 			return;
@@ -398,8 +296,7 @@ function mouseFunctions(){
 		$( "#selectedCol" ).append( col + 1);
 		selectedHexagon = this;
 		$( "#playMove" ).show("fast");
-	}
-	);
+	});
 }
 
 /* ----Grid Functions---- */
@@ -463,6 +360,13 @@ function resetGame (){
 	if (speed != "slow"){ speed = "slow"; }
 }
 
+function firstTimeTutorial(){
+	if ( showTutorial == true ){
+		$( "#tutorialModal" ).modal( 'show' );
+		showTutorial = false;
+	}
+}
+
 function startGame(){
 	myGrid = generateGrid( totalRows, totalCols );
 	$( "#tableContainer" ).append( myGrid );
@@ -480,14 +384,18 @@ function startGame(){
 	generateBoard();
 	generateBoardPtrs();
 	resetProgressBar();
+	
 
 	if ( playerUser == 2 ){
-		//makeRobotMove();
+		// Robot goes first
 		waitingModal( 'show' );
 		setTimeout(function(){ 
 			makeRobotMove(); 
 			waitingModal( 'hide' );
-		}, 1000); // robot goes first
+			firstTimeTutorial();
+		}, 1000);
+	} else {
+		firstTimeTutorial();
 	}
 }
 
@@ -502,13 +410,9 @@ function generateBoard (){
 	}
 }
 
-function freezeBoard (){
-	frozen = true;
-}
+function freezeBoard (){ frozen = true; }
 
-function unfreezeBoard(){
-	frozen = false;
-}
+function unfreezeBoard(){ frozen = false; }
 
 function generateBoardPtrs(){
 	var cells = $(".hex");
@@ -526,12 +430,10 @@ function generateBoardPtrs(){
 function getCoords( cellPtr ){
 	var row   = $( cellPtr ).closest('tr').index() / 2;
 	var col   = ($( cellPtr ).parent().children().index( cellPtr ) - row) / 2;
-	return [row, col]; // 0-index
+	return [row, col]; 
 }
 
-function isEmpty( row, col ){
-	return hexBoard[row][col] == 0 ? true : false;
-}
+function isEmpty( row, col ){ return hexBoard[row][col] == 0 ? true : false; }
 
 function winnerFound( player ){
 	/* Create visited, cost, and prev matrices */
@@ -638,7 +540,6 @@ function updateProgressBar( probOfRobotWinning ){
 	if ( playerUser == 1 ){
 		$("#playerOneBar").empty();
 		$("#playerOneBar").append( probOfUserWinning );
-
 		$("#playerTwoBar").empty();
 		$("#playerTwoBar").append( probOfRobotWinning );
 	} else {
@@ -647,8 +548,6 @@ function updateProgressBar( probOfRobotWinning ){
 		$("#playerTwoBar").empty();
 		$("#playerTwoBar").append( probOfUserWinning );
 	}
-	//console.log( "Probability of user winning: " + probOfUserWinning );
-	//console.log( "Probability of robot winning: " + probOfRobotWinning );
 }
 
 function resetProgressBar(){
@@ -658,20 +557,14 @@ function resetProgressBar(){
 	$("#playerTwoBar").append( "50%" );
 }
 
-function waitingModal(action ){
-	//console.log( action + " the modal");
-	$( "#waitingModal" ).modal( action );
-}
+function waitingModal(action ){ $( "#waitingModal" ).modal( action ); }
 
 /* Makes the robot's next move */
 function makeRobotMove(){
 	let myTree = new minMaxTree();
 	var [ x, y ] = myTree.getNextMove( playerRobot ); 
-	//console.log("Move selected -> [ "+x+" ,"+y+" ]");
-	//console.log("Probability of winning -> " + myTree.probOfWinning );
 	updateProgressBar( myTree.probOfWinning );
 	playMove( x, y, hexBoardPtrs[x][y], playerRobot );
-	return;
 }
 
 /* Play a move on the hex board */
@@ -691,7 +584,6 @@ $( "#p1btn" ).click(function(){
 	playerUser = 1;
 	playerRobot = 2;
 	$( "#playerObjective" ).append( p1objective );
-
 	$( "#welcomeMessage" ).hide("slow", function() {
 		$( "#difficultyMessage" ).show("slow", function() {});
 	});
@@ -701,7 +593,6 @@ $( "#p2btn" ).click(function(){
 	playerUser = 2;
 	playerRobot = 1;
 	$( "#playerObjective" ).append( p2objective );
-
 	$( "#welcomeMessage" ).hide("slow", function() {
 		$( "#difficultyMessage" ).show("slow", function() {});
 	});
@@ -709,7 +600,6 @@ $( "#p2btn" ).click(function(){
 
 $( "#normalBtn" ).click(function(){
 	difficulty = "normal";
-
 	$( "#difficultyMessage" ).hide("slow", function() {
 		startGame();
 	});
@@ -717,16 +607,12 @@ $( "#normalBtn" ).click(function(){
 
 $( "#hardBtn" ).click(function(){
 	difficulty = "hard";
-
 	$( "#difficultyMessage" ).hide("slow", function() {
 		startGame();
 	});
 });
 
-$( "#reset" ).click(function(){
-	resetGame();
-}
-);
+$( "#reset" ).click(function(){ resetGame(); });
 
 $( "#playMove" ).click( async function(){
 	if ( frozen ){ return; }
@@ -736,7 +622,6 @@ $( "#playMove" ).click( async function(){
 		selectedHexagon = null;
 		$( "#selectedRow" ).empty();
 		$( "#selectedCol" ).empty();
-
 		// See if user won
 		if ( !winnerFound( playerUser ) ){
 			waitingModal( 'show' );
@@ -754,13 +639,11 @@ $( "#playMove" ).click( async function(){
 			freezeBoard();
 		}
 	}
-}
-);
+});
 
-$( "#closeModal" ).click(function(){
-	$("#outcomeModal").modal('hide');
-}
-);
+$( "#closeModal" ).click(function(){ $("#outcomeModal").modal('hide'); });
+
+$( "#tutorial" ).click(function(){ $("#tutorialModal").modal('show'); });
 
 /* global bootstrap: false */
 (function () {

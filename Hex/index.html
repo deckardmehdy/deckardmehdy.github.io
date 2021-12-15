@@ -11,9 +11,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css">
 	
-
-    
-
     <!-- Bootstrap core CSS -->
 	<link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -38,7 +35,6 @@
     <link href="styles/main.css" rel="stylesheet">
 	<link href="styles/heroes.css" rel="stylesheet">
   </head>
-  <body>
     
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="bootstrap" viewBox="0 0 118 94">
@@ -101,6 +97,7 @@
 
 <main>
 
+  <!-- Side Nav Bar -->
   <div id = "sideNavbar" class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px; height: 100vh;">
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item nav-link text-white">
@@ -141,8 +138,9 @@
 	</div>
   </div>
 
+    <!-- Body Container -->
   	<div id="bodyContainer" class="flex-column">
-	
+		<!-- Welcome Message -->
 		<div id = "welcomeMessage" class= "text-center">
 			<i class="d-block mx-auto bi bi-hexagon-half" width="72" height="40" style= "font-size: 50px;"></i>
 			<h1 class="display-5 fw-bold">Welcome to Hex!</h1>
@@ -154,7 +152,7 @@
 				</div>
 			</div>
 		</div>
-
+        <!-- Difficulty Message -->
 		<div id="difficultyMessage" class="text-center">
 			<i class="d-block mx-auto bi bi-person-circle" width="72" height="40" style= "font-size: 50px;"></i>
 			<h1 class="display-5 fw-bold">Welcome to Hex!</h1>
@@ -169,11 +167,11 @@
 				</div>
 			</div>
 		</div>
-
+		<!-- Hex Board -->
 		<div class="d-flex flex-column align-items-center p-2" id="bigTableContainer">
 			<div id="tableContainer">
 		</div>
-
+		<!-- Hex Board Keys -->
 		<div id="keyContainer" class='d-flex flex-row flex-wrap m-2 justify-content-around key'>	
 			<div class='d-flex p-3 align-items-center'>
 				<div><i class='bi bi-hexagon empty key' style='font-size: 1.5em;'></i></div>  
@@ -197,12 +195,11 @@
 				<div class='key'>Winning Path</div>
 			</div>
    		</div>
-
 	</div>
   
   <!-- Outcome Modal -->
   <div class="modal fade" id="outcomeModal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+	<div class="modal-dialog modal-dialog-centered" role="document">
 	  <div class="modal-content">
 		<div class="modal-header">
 		  <h5 class="modal-title" id="outcomeTitle"></h5>
@@ -230,13 +227,84 @@
 		</div>
 	</div>
 
+  <!-- Tutorial Modal -->
+  <div class="modal fade" id="tutorialModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-scrollable">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="exampleModalLabel">Tutorial</h5>
+		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<p>Welcome to Hex! Hex was originally invented by John Nash in 1948. The rules for the game are simple:</p>
+			<div class="card">
+				<h5 class="card-header">Rule #1</h5>
+				<div class="card-body">
+				  <p class="card-text">Each player is assigned a pair of opposite sides of the board. 
+				  Player 1 is assigned the left and right (green); Player 2 is assigned the top and bottom (purple). </p>
+				</div>
+				<img src='images/rule_1.jpg'></img>
+			</div>
+			<br>
+			<div class="card">
+				<h5 class="card-header">Rule #2</h5>
+				<div class="card-body">
+				  <p class="card-text">Each player must try to connect their respective sides of the board by placing hexagons with their unique color.</p>
+				  <p class="card-text">To do this, select an empty hexagon and click the "Play Move" button.</p>
+				</div>
+				<img src='images/playing_move.gif'></img>
+			</div>
+			<br>
+			<div class="card">
+				<h5 class="card-header">Rule #3</h5>
+				<div class="card-body">
+				  <p class="card-text">Once placed, the hexagons cannot be moved or erased.</p>
+				  
+				</div>
+			</div>
+			<br>
+			<div class="card">
+				<h5 class="card-header">Rule #4</h5>
+				<div class="card-body">
+				  <p class="card-text">A player wins by successfully connecting their sides together through a chain of adjacent hexagons.</p>
+				  <div class="card" style="width: 100%;">
+					<img src='images/player_one_wins.jpg'></img>
+					<div class="card-body">
+					  <p class="card-text">Example of Player 1 winning (in blue).</p>
+					</div>
+				  </div>
+				  <br>
+				  <div class="card" style="width: 100%;">
+					<img src='images/player_two_wins.jpg'></img>
+					<div class="card-body">
+						<p class="card-text">Example of Player 2 winning (in blue).</p>
+					</div>
+				  </div>
+				</div>
+			</div>
+			<br>
+			<div class="card">
+				<h5 class="card-header">Enjoy Hex!</h5>
+				<div class="card-body">
+				  <p class="card-text">If you want to restart, click the "Reset" button. If you wish to revisit this tutorial, click the "Tutorial" button.</p>
+				  <hr>
+				  <p>If you want to see other projects that I've created, check out my github!</p>
+				  </p>
+				  <a href="https://github.com/deckardmehdy" class="btn btn-primary">Github</a>
+				</div>
+			  </div>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		</div>
+	  </div>
+	</div>
+  </div>
   
 </main>
-
-
     <!-- Boostrap, jQuery, and my JS Script -->
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
-  </body>
+
 </html>
