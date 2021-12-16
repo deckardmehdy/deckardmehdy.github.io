@@ -346,6 +346,7 @@ function resetGame (){
 	$( "#keyContainer" ).css( "display", "none" );
 	$( "#difficultyMessage" ).css( "display", "none" );
 	$( "#startGame" ).css( "display", "none" );
+	$( "#sideNavbar" ).css( "padding", "0rem" );
 
 	$( "#welcomeMessage" ).show("slow");
 
@@ -379,6 +380,7 @@ function startGame(){
 	$( "#tutorial" ).show(speed);
 	$( "#reset" ).show(speed);
 	$( ".key" ).show("fast");
+	$( "#sideNavbar" ).css( "padding", "1rem" );
 
 	unfreezeBoard();
 	generateBoard();
