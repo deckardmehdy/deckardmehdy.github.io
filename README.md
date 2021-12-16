@@ -6,5 +6,6 @@ Hi everyone! This is a repository for my projects. To view them, click the links
   * https://deckardmehdy.github.io/myPath/
    * **Pathfinding Algorithms:** A*; Breadth-First Search; Depth-First Search; Greedy Best-First Search; Modified Jump Point Search; Dijkstra.
    * **Maze Generating Algorithms:** Random (uses recursive backtracking); Recursive Division; Recursive Division (horizontal skew); Recursive Division (vertical skew); Simple Spiral.
-* **Hex** (*HTML, CSS, JavaScript, and jQuery*):
+* **Hex** (*HTML, CSS, JavaScript, and jQuery*): This is an interactive board game where a user plays against a “robot” (i.e. AI algorithm) on an MxN Hex board. A user can choose to be Player 1 or 2, and can choose between two modes of difficulty: normal and hard. ***This project is not suitable for mobiles or older versions of browsers. Google Chrome or Safari work best.***
   *  https://deckardmehdy.github.io/Hex/
+  *  **Learn more about this project here:** https://github.com/deckardmehdy/Hex
